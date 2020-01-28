@@ -18,7 +18,7 @@ class App extends Component {
 		image: null,
 		color: "",
 		products: [],
-		product: {}
+		productId: ""
 	}
 
 
@@ -46,12 +46,20 @@ class App extends Component {
 		.catch(err => console.log(err));
 	}
 	
+	async componentDidMount() {
+		const api_call = await axios.get(`${url}`);
+		const response = await api_call;
+        const lastProduct = response.data.docs.products.length;
+		// console.log(response.data.docs.products[lastProduct - 1]);
+		// this.setState({ products: response.data.docs.products.reverse() });
+		this.setState({ productId: response.data.docs.products[lastProduct - 1].id});
+	}
 
 	getProductHandler = async e => {
 		const api_call = await axios.get(`${url}`);
 		const response = await api_call;
         const lastProduct = response.data.docs.products.length;
-		console.log(response.data.docs.products[lastProduct - 1]);
+		// console.log(response.data.docs.products[lastProduct - 1]);
 		this.setState({ products: response.data.docs.products.reverse() });
 		this.setState({ product: response.data.docs.products[0]});
 	}
@@ -126,7 +134,7 @@ class App extends Component {
 
 				<button className="btn btn-primary" onClick={this.getProductHandler}>Get Product</button>
 				<Detail details={this.state.products} />
-				<Preview preview={this.state.product} />
+				<Preview id={this.state.productId} />
 			</div>
 		);
 	}
